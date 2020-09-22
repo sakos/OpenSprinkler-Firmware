@@ -1265,7 +1265,11 @@ void server_change_values()
 
 	if (findKeyVal(p, tmp_buffer, TMP_BUFFER_SIZE, PSTR("en"), true)) {
 		if (tmp_buffer[0]=='1' && !os.status.enabled)  os.enable();
-		else if (tmp_buffer[0]=='0' &&	os.status.enabled)	os.disable();
+		else if (tmp_buffer[0]=='0' &&  os.status.enabled)  {
+			reset_all_stations(); 	// Stop all scheduled operation including manual runs when operation is set to disabled
+						// further manual runs are possible.
+			os.disable();
+		}
 	}
 
 	if (findKeyVal(p, tmp_buffer, TMP_BUFFER_SIZE, PSTR("rd"), true)) {
