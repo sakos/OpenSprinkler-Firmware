@@ -1093,10 +1093,10 @@ void OpenSprinkler::apply_all_station_bits() {
 	// Shift out all station bit values
 	// from the highest bit to the lowest
 	for(bid=0;bid<=MAX_EXT_BOARDS;bid++) {
-	//	if (status.enabled)
-		sbits = station_bits[MAX_EXT_BOARDS-bid];
-	//	else
-	//		sbits = 0;
+		if (status.enabled)
+			sbits = station_bits[MAX_EXT_BOARDS-bid];
+		else
+			sbits = 0;
 
 		for(s=0;s<8;s++) {
 			digitalWrite(PIN_SR_CLOCK, LOW);

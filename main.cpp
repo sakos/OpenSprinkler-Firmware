@@ -701,8 +701,7 @@ void do_loop()
 		RuntimeQueueStruct *q;
 		// since the granularity of start time is minute
 		// we only need to check once every minute
-		// we also check if the operation is enabled. No timer initiated scheduling when automatic operation is disabled
-		if ((curr_minute != last_minute)  && os.status.enabled) {
+		if (curr_minute != last_minute) {
 			last_minute = curr_minute;
 			// check through all programs
 			for(pid=0; pid<pd.nprograms; pid++) {
@@ -753,7 +752,7 @@ void do_loop()
 
 			// calculate start and end time
 			if (match_found) {
-				schedule_all_stations(curr_time);  // Scheduled run maybe disabled by  system
+				schedule_all_stations(curr_time);
 
 				// For debugging: print out queued elements
 				/*DEBUG_PRINT("en:");
