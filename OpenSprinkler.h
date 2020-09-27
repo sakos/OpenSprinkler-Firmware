@@ -55,6 +55,8 @@
 	#include <netdb.h>	
 	#include <sys/stat.h>  
 	#include "etherport.h"
+	#include "linux/watchdog.h"
+	#include "sys/ioctl.h"
 #endif // end of headers
 
 /** Non-volatile data structure */
@@ -162,6 +164,7 @@ public:
 	static byte nboards, nstations;
 	static byte hw_type;	// hardware type
 	static byte hw_rev;		// hardware minor
+	static int deviceHandle;    // Watchdog device handler for RPi
 
 	static byte iopts[]; // integer options
 	static const char*sopts[]; // string options

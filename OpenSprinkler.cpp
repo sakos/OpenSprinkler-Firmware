@@ -56,6 +56,7 @@ ulong OpenSprinkler::checkwt_success_lasttime;
 ulong OpenSprinkler::powerup_lasttime;
 uint8_t OpenSprinkler::last_reboot_cause = REBOOT_CAUSE_NONE;
 byte OpenSprinkler::weather_update_flag;
+int OpenSprinkler::deviceHandle;
 
 // todo future: the following attribute bytes are for backward compatibility
 byte OpenSprinkler::attrib_mas[MAX_NUM_BOARDS];
@@ -633,13 +634,31 @@ void OpenSprinkler::reboot_dev(uint8_t cause) {
 #if defined(DEMO)
 	// do nothing
 #else
+	// Reset all stations before quit
+	clear_all_station_bits();
+	apply_all_station_bits();
 	sync(); // add sync to prevent file corruption
+	// Stop Watchdog by sending magic character
+	// deviceHandle can have valid value only in case of OSPI
+	if (deviceHandle  >= 0) {
+		write(deviceHandle, "V", 1);
+		DEBUG_PRINTLN("Device reboot. Watchdog stopped.");
+	}
 	reboot(RB_AUTOBOOT);
 #endif
 }
 
 /** Launch update script */
 void OpenSprinkler::update_dev() {
+	clear_all_station_bits();
+	apply_all_station_bits();
+	sync(); // add sync to prevent file corruption
+	// Stop Watchdog by sending magic character
+	// deviceHandle can have valid value only in case of OSPI
+	if (deviceHandle  >= 0) {
+		write(deviceHandle, "V", 1);
+		DEBUG_PRINTLN("System update. Watchdog stopped.");
+	}
 	char cmd[1000];
 	sprintf(cmd, "cd %s & ./updater.sh", get_runtime_path());
 	system(cmd);
@@ -2511,6 +2530,8 @@ void OpenSprinkler::ui_set_options(int oid)
 	}
 	lcd.noBlink();
 }
+
+
 
 /** Set LCD contrast (using PWM) */
 void OpenSprinkler::lcd_set_contrast() {

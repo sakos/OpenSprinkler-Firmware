@@ -368,6 +368,19 @@ void do_setup() {
 
 	os.mqtt.init();
 	os.status.req_mqtt_restart = true;
+#if defined(OSPI)
+	DEBUG_PRINTLN("OSPI started");
+	// Try to inicialize Watchdog device
+	// deviceHandle >=0 indicates success
+	if ((os.deviceHandle = open("/dev/watchdog", O_WRONLY)) < 0) {
+		DEBUG_PRINTLN("Error: Couldn't open watchdog device!");
+	} else {
+		ioctl(os.deviceHandle, WDIOC_SETTIMEOUT, WATCHDOG_TIMEOUT);
+		DEBUG_PRINTLN("Watchdog device opened.");
+	}
+#else
+	os.deviceHandle = -1;
+#endif
 }
 #endif
 
@@ -1000,6 +1013,12 @@ void do_loop()
 		if(reboot_notification) {
 			reboot_notification = 0;
 			push_message(NOTIFY_REBOOT);
+		}
+		
+		// kick Watchdog
+		// deviceHandle can have valid value only in case of OSPI
+		if (os.deviceHandle  >= 0) {
+			ioctl(os.deviceHandle, WDIOC_KEEPALIVE, 0);
 		}
 
 	}

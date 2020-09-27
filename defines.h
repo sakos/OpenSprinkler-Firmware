@@ -489,4 +489,6 @@ enum {
 
 #define DISPLAY_MSG_MS      2000  // message display time (milliseconds)
 
+#define WATCHDOG_TIMEOUT      15  // OSPI HW watchdog timeout
+
 #endif  // _DEFINES_H
